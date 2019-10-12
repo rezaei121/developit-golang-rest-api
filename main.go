@@ -13,7 +13,9 @@ func main() {
 	defer connection.Close()
 
 	router := httprouter.New()
-	router.GET("/user/index", controllers.IndexAction)
+
+	userController := controllers.NewUserController(connection)
+	router.POST("/user/register", userController.ActionRegister)
 
 	http.ListenAndServe(":8080", router)
 }
