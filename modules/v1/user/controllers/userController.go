@@ -6,10 +6,14 @@ import (
 	"net/http"
 )
 
-func NewUserController()  {
+func NewUserController() {
 
 }
 
 func IndexAction(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	fmt.Fprintln(rw, "user index action...")
+}
+
+func ActionRegister(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 }
