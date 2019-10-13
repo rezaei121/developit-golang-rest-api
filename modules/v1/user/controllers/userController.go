@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/julienschmidt/httprouter"
+	"gopkg.in/asaskevich/govalidator.v4"
 	"net/http"
 	"time"
 )
@@ -45,14 +46,18 @@ func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	result := controller.db.Create(&userModel)
-	if len(result.GetErrors()) > 0 {
-		fmt.Println(result.GetErrors())
-		httperror := httperror.New(http.StatusBadRequest, "can not create")
-		errorMessage, _ := json.Marshal(&httperror)
-		rw.WriteHeader(http.StatusBadRequest)
-		rw.Write(errorMessage)
+
+	_, validateError := govalidator.ValidateStruct(&userModel)
+	if validateError != nil {
+		httperror.New(http.StatusBadRequest, validateError.Error(), rw)
 		return
 	}
+
+	result := controller.db.Create(&userModel)
+	if len(result.GetErrors()) > 0 {
+		httperror.New(http.StatusBadRequest, "can not create", rw)
+		return
+	}
+
 	rw.WriteHeader(http.StatusNoContent)
 }
