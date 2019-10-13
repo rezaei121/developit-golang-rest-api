@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"developit-golang-rest-api/helpers/httperror"
+	"developit-golang-rest-api/helpers/password"
+	"developit-golang-rest-api/helpers/randomstring"
 	"developit-golang-rest-api/modules/v1/user/models"
 	"encoding/json"
 	"fmt"
@@ -28,19 +30,24 @@ func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.
 	var input models.User
 	decoder.Decode(&input)
 
+	sultString := randomstring.New(8)
+	passwordHash := password.Hash(input.Password + sultString)
+
 	userModel := models.User{
 		Name:      input.Name,
 		Surname:   input.Surname,
 		Email:     input.Email,
-		Password:  input.Password,
+		Password:  passwordHash,
 		Status:    input.Status,
+		Sult:      sultString,
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	result := controller.db.Create(&userModel)
-	if result.GetErrors() != nil {
+	if len(result.GetErrors()) > 0 {
+		fmt.Println(result.GetErrors())
 		httperror := httperror.New(http.StatusBadRequest, "can not create")
 		errorMessage, _ := json.Marshal(&httperror)
 		rw.WriteHeader(http.StatusBadRequest)

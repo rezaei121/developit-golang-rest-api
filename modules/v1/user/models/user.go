@@ -9,6 +9,7 @@ type User struct {
 	Email     string `gorm:"type:varchar(255);unique;not null"`
 	Password  string `gorm:"type:varchar(255);not null"`
 	Status    int    `gorm:"type:int2;not null;default:1"`
+	Sult      string `gorm:"type:varchar(8);not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
