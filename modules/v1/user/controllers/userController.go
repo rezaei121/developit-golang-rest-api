@@ -26,6 +26,34 @@ func IndexAction(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	fmt.Fprintln(rw, "user index action...")
 }
 
+func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	decoder := json.NewDecoder(r.Body)
+	var input models.UserLogin
+	decoder.Decode(&input)
+	user := &models.User{}
+	controller.db.Where("email = ?", input.Email).Find(user)
+
+	if user.Email == "" {
+		httperror.New(http.StatusNotFound, "username or password is incorrect!", rw)
+		return
+	}
+
+	if password.CheckHash(input.Password+user.Sult, user.Password) {
+		userTokenModel := models.UserToken{
+			UserId:    user.Id,
+			Token:     randomstring.New(32),
+			CreatedAt: time.Time{},
+		}
+		controller.db.Create(&userTokenModel)
+		result, _ := json.Marshal(userTokenModel)
+		rw.WriteHeader(http.StatusOK)
+		rw.Write(result)
+	} else {
+		httperror.New(http.StatusBadRequest, "username or password is incorrect!", rw)
+		return
+	}
+}
+
 func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	decoder := json.NewDecoder(r.Body)
 	var input models.User

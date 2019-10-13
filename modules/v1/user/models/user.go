@@ -13,3 +13,15 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+type UserLogin struct {
+	Email    string `valid:"email,required"`
+	Password string `valid:"required,stringlength(7|255)"`
+}
+
+type UserToken struct {
+	Id        uint64 `gorm:"primary_key;AUTO_INCREMENT"`
+	UserId    uint64 `gorm:"unsigned;not null"`
+	Token     string `gorm:"type:text;not null"`
+	CreatedAt time.Time
+}

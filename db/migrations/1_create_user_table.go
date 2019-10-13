@@ -11,6 +11,7 @@ type CreateUserTableMigration struct {
 
 func (m CreateUserTableMigration) Up() {
 	m.db.CreateTable(&models.User{})
+	m.db.CreateTable(&models.UserToken{})
 }
 
 func (m CreateUserTableMigration) Down() {

@@ -15,7 +15,8 @@ func main() {
 	router := httprouter.New()
 
 	userController := controllers.NewUserController(connection)
-	router.POST("/user/register", userController.ActionRegister)
+	router.POST("/v1/user/login", userController.ActionLogin)
+	router.POST("/v1/user/register", userController.ActionRegister)
 
 	http.ListenAndServe(":8080", router)
 }
