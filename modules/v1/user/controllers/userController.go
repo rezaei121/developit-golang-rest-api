@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"developit-golang-rest-api/helpers/httperror"
 	"developit-golang-rest-api/modules/v1/user/models"
 	"encoding/json"
 	"fmt"
@@ -36,9 +37,15 @@ func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},
 	}
-	if controller.db.NewRecord(&userModel) {
-		rw.WriteHeader(http.StatusNoContent)
-	}
 
-	rw.WriteHeader(http.StatusBadRequest)
+	rw.Header().Set("Content-Type", "application/json")
+	result := controller.db.Create(&userModel)
+	if result.GetErrors() != nil {
+		httperror := httperror.New(http.StatusBadRequest, "can not create")
+		errorMessage, _ := json.Marshal(&httperror)
+		rw.WriteHeader(http.StatusBadRequest)
+		rw.Write(errorMessage)
+		return
+	}
+	rw.WriteHeader(http.StatusNoContent)
 }
