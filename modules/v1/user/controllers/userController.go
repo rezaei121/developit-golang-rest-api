@@ -26,6 +26,11 @@ func IndexAction(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	fmt.Fprintln(rw, "user index action...")
 }
 
+func (controller UserController) ActionProfile(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	httperror.New(404, "coming soon...", rw)
+	return
+}
+
 func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	decoder := json.NewDecoder(r.Body)
 	var input models.UserLogin
