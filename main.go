@@ -19,7 +19,7 @@ func main() {
 
 	router.POST("/v1/user/login", userController.ActionLogin)
 	router.POST("/v1/user/register", userController.ActionRegister)
-	router.POST("/v1/dashboard/user/profile", middlewares.TokenAuth(userController.ActionProfile))
+	router.POST("/v1/dashboard/user/profile", middlewares.TokenAuth(userController.ActionProfile, connection))
 
 	http.ListenAndServe(":8080", router)
 }
