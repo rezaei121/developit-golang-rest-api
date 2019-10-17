@@ -1,8 +1,8 @@
 consumes:
 - application/io.goswagger.examples.todo-list.v1+json
 info:
-  description: From the todo list tutorial on goswagger.io
-  title: A Todo list application
+  description: golang rest api sample
+  title: api doc
   version: 1.0.0
 paths: {}
 produces:
