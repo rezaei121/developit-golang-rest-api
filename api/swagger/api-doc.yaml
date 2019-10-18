@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: wikit OpenApi
+  description: wikit Swagger OpenApi description
+  contact:
+    email: me@developit.ir
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/api'
+paths:
+  /v1/user/login:
+    post:
+      summary: user login
+      description: ''
+      requestBody:
+        description: Pet object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: 'http://localhost:8080/api/swagger/schemas/Pet.yaml'
+          application/xml:
+            schema:
+              $ref: 'http://localhost:8080/api/swagger/schemas/Pet.yaml'
+        required: true
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - user
