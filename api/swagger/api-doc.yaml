@@ -17,10 +17,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'http://localhost:8080/api/swagger/schemas/Pet.yaml'
+              $ref: 'http://localhost:8080/api/swagger/schemas/Pet'
           application/xml:
             schema:
-              $ref: 'http://localhost:8080/api/swagger/schemas/Pet.yaml'
+              $ref: 'http://localhost:8080/api/swagger/schemas/Pet'
         required: true
       responses:
         default:
