@@ -1,4 +1,4 @@
 # project files
 .idea
-swagger-ui
-swagger-editor
+/swagger-ui
+/swagger-editor
