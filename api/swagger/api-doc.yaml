@@ -8,22 +8,25 @@ info:
 servers:
   - url: 'http://localhost:8080/api'
 paths:
-  /v1/user/login:
+  '/v1/user/login':
     post:
       summary: user login
       description: ''
       requestBody:
-        description: Pet object that needs to be added to the store
         content:
           application/json:
             schema:
-              $ref: 'http://localhost:8080/api/swagger/schemas/Pet'
+              $ref: 'http://localhost:8080/api/swagger/schemas/user-login'
           application/xml:
             schema:
-              $ref: 'http://localhost:8080/api/swagger/schemas/Pet'
+              $ref: 'http://localhost:8080/api/swagger/schemas/user-login'
         required: true
       responses:
-        default:
-          description: Default error sample response
+        '200':
+          description: Successful created
+        '400':
+          description: Bad request
+        '404':
+          description: Resource Not Found
       tags:
         - user

@@ -5,8 +5,9 @@ import (
 	"developit-golang-rest-api/components/db"
 	"developit-golang-rest-api/components/middlewares"
 	"fmt"
+	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,38 +17,44 @@ func main() {
 	connection := db.Connect()
 	defer connection.Close()
 
-	router := httprouter.New()
+	router := mux.NewRouter()
+	router.Use(middlewares.RestApiHeader)
 
 	userController := controllers.NewUserController(connection)
+	router.HandleFunc("/api/v1/user/login", userController.ActionLogin).Methods("POST")
+	router.HandleFunc("/api/v1/user/register", userController.ActionRegister).Methods("POST")
 
-	router.POST("/v1/user/login", userController.ActionLogin)
-	router.POST("/v1/user/register", userController.ActionRegister)
-	router.POST("/v1/dashboard/user/profile", middlewares.TokenAuth(userController.ActionProfile, connection))
+	// dashboard api
+	authenticationMiddleware := middlewares.NewAuthentication(connection)
+	dashboardRouter := router.PathPrefix("/api/v1/dashboard").Subrouter()
+	dashboardRouter.Use(authenticationMiddleware.TokenAuthentication)
+	dashboardRouter.HandleFunc("/user/profile", userController.ActionProfile).Methods("POST")
 
-	router.GET("/api/swagger/api-doc", ActionApiDoc)
-	router.GET("/api/swagger/schemas/:name", ActionApiSchemas)
+	//swg api
+	router.HandleFunc("/api/swagger/api-doc", ActionApiDoc)
+	router.HandleFunc("/api/swagger/schemas/{name}", ActionApiSchemas)
 
-	//router.ServeFiles("/api/swagger/*filepath", http.Dir("api/swagger"))
-
-	http.ListenAndServe(":8080", router)
+	handler := cors.Default().Handler(router)
+	http.ListenAndServe(":8080", handler)
 }
 
-func ActionApiDoc(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func ActionApiDoc(rw http.ResponseWriter, r *http.Request) {
 	file, error := ioutil.ReadFile("./api/swagger/api-doc.yaml")
 	if error != nil {
 		log.Fatal(error)
 	}
-	rw.Header().Set("Access-Control-Allow-Methods", r.Header.Get("Allow"))
-	rw.Header().Set("Access-Control-Allow-Origin", "*")
+	rw.Header().Set("Content-Type", "")
+	rw.Header().Set("accept", "")
 	fmt.Fprint(rw, string(file))
 }
 
-func ActionApiSchemas(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	file, error := ioutil.ReadFile("./api/swagger/schemas/" + p.ByName("name") + ".yaml")
+func ActionApiSchemas(rw http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	file, error := ioutil.ReadFile("./api/swagger/schemas/" + params["name"] + ".yaml")
 	if error != nil {
 		log.Fatal(error)
 	}
-	rw.Header().Set("Access-Control-Allow-Methods", r.Header.Get("Allow"))
-	rw.Header().Set("Access-Control-Allow-Origin", "*")
+	rw.Header().Set("Content-Type", "")
+	rw.Header().Set("accept", "")
 	fmt.Fprint(rw, string(file))
 }

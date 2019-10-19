@@ -26,12 +26,12 @@ func IndexAction(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	fmt.Fprintln(rw, "user index action...")
 }
 
-func (controller UserController) ActionProfile(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (controller UserController) ActionProfile(rw http.ResponseWriter, r *http.Request) {
 	httperror.New(404, "coming soon...", rw)
 	return
 }
 
-func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var input models2.UserLogin
 	decoder.Decode(&input)
@@ -55,11 +55,10 @@ func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Req
 		rw.Write(result)
 	} else {
 		httperror.New(http.StatusBadRequest, "username or password is incorrect!", rw)
-		return
 	}
 }
 
-func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var input models2.User
 	decoder.Decode(&input)
