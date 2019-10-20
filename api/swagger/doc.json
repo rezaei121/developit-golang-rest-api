@@ -1,0 +1,91 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "wikit OpenApi",
+    "description": "wikit Swagger OpenApi description",
+    "contact": {
+      "email": "me@developit.ir"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api"
+    }
+  ],
+  "paths": {
+
+  "/v1/test/test-api": {
+    "post": {
+      "tags": [
+        "user"
+      ],
+      "summary": "login",
+      "description": "",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "http://localhost:8080/api/modules/v1/user/swagger/schemas/user-login.json"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful created",
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "404": {
+          "description": "Resource Not Found"
+        }
+      }
+    }
+  }
+,
+  "/v1/user/login": {
+    "post": {
+      "tags": [
+        "user"
+      ],
+      "summary": "login",
+      "description": "",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "http://localhost:8080/api/modules/v1/user/swagger/schemas/user-login.json"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful created",
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "404": {
+          "description": "Resource Not Found"
+        }
+      }
+    }
+  }
+
+}
+}

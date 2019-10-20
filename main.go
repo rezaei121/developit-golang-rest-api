@@ -4,13 +4,16 @@ import (
 	"developit-golang-rest-api/api/modules/v1/user/controllers"
 	"developit-golang-rest-api/components/db"
 	"developit-golang-rest-api/components/middlewares"
-	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/rs/cors"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 func main() {
@@ -18,43 +21,48 @@ func main() {
 	defer connection.Close()
 
 	router := mux.NewRouter()
-	router.Use(middlewares.RestApiHeader)
+
+	apiRouter := router.PathPrefix("/api").Subrouter()
+	apiRouter.Use(middlewares.RestApiHeader)
 
 	userController := controllers.NewUserController(connection)
-	router.HandleFunc("/api/v1/user/login", userController.ActionLogin).Methods("POST")
-	router.HandleFunc("/api/v1/user/register", userController.ActionRegister).Methods("POST")
+	apiRouter.HandleFunc("/v1/user/login", userController.ActionLogin).Methods("POST")
+	apiRouter.HandleFunc("/v1/user/register", userController.ActionRegister).Methods("POST")
 
 	// dashboard api
 	authenticationMiddleware := middlewares.NewAuthentication(connection)
 	dashboardRouter := router.PathPrefix("/api/v1/dashboard").Subrouter()
+	dashboardRouter.Use(middlewares.RestApiHeader)
 	dashboardRouter.Use(authenticationMiddleware.TokenAuthentication)
+
 	dashboardRouter.HandleFunc("/user/profile", userController.ActionProfile).Methods("POST")
 
 	//swg api
-	router.HandleFunc("/api/swagger/api-doc", ActionApiDoc)
-	router.HandleFunc("/api/swagger/schemas/{name}", ActionApiSchemas)
-
+	generateSwaggerAPI()
+	router.PathPrefix("/api").Handler(http.StripPrefix("/api", http.FileServer(http.Dir("./api/"))))
 	handler := cors.Default().Handler(router)
 	http.ListenAndServe(":8080", handler)
 }
 
-func ActionApiDoc(rw http.ResponseWriter, r *http.Request) {
-	file, error := ioutil.ReadFile("./api/swagger/api-doc.yaml")
-	if error != nil {
-		log.Fatal(error)
+func generateSwaggerAPI() {
+	var items []string
+	var re = regexp.MustCompile(`(?ms){(.*)}`)
+	err := filepath.Walk("./api/",
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if info.Name() == "api-doc.json" {
+				fileData, _ := ioutil.ReadFile(path)
+				res := re.ReplaceAllString(string(fileData), "${1}")
+				items = append(items, res)
+			}
+			return nil
+		})
+	if err != nil {
+		log.Println(err)
 	}
-	rw.Header().Set("Content-Type", "")
-	rw.Header().Set("accept", "")
-	fmt.Fprint(rw, string(file))
-}
-
-func ActionApiSchemas(rw http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	file, error := ioutil.ReadFile("./api/swagger/schemas/" + params["name"] + ".yaml")
-	if error != nil {
-		log.Fatal(error)
-	}
-	rw.Header().Set("Content-Type", "")
-	rw.Header().Set("accept", "")
-	fmt.Fprint(rw, string(file))
+	server, _ := ioutil.ReadFile("./api/swagger/server.json")
+	result := strings.Replace(string(server), "\"paths\": {}", "\"paths\": {\n"+strings.Join(items, ","), -1) + "\n}"
+	ioutil.WriteFile("./api/swagger/doc.json", []byte(result), 0777)
 }
