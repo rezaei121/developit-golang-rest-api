@@ -72,16 +72,38 @@
         "200": {
           "description": "Successful created",
           "content": {
-            "application/json": {
-              "schema": {}
-            }
+            "application/json": {}
           }
         },
-        "400": {
-          "description": "Bad request"
+        "400 series": {
+          "description": "errors"
+        }
+      }
+    }
+  },
+  "/v1/user/register": {
+    "post": {
+      "tags": [
+        "user"
+      ],
+      "summary": "register a new user",
+      "description": "",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "http://localhost:8080/api/modules/v1/user/swagger/schemas/user-register.json"
+            }
+          }
+        }
+      },
+      "responses": {
+        "204": {
+          "description": "Successful. not content"
         },
-        "404": {
-          "description": "Resource Not Found"
+        "400 series": {
+          "description": "errors"
         }
       }
     }

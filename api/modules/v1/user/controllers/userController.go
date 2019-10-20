@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	models2 "developit-golang-rest-api/api/modules/v1/user/models"
+	"developit-golang-rest-api/api/modules/v1/user/models"
 	"developit-golang-rest-api/components/helpers/httperror"
 	"developit-golang-rest-api/components/helpers/password"
 	"developit-golang-rest-api/components/helpers/randomstring"
@@ -33,9 +33,9 @@ func (controller UserController) ActionProfile(rw http.ResponseWriter, r *http.R
 
 func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var input models2.UserLogin
+	var input models.UserLogin
 	decoder.Decode(&input)
-	user := &models2.User{}
+	user := &models.User{}
 	controller.db.Where("email = ?", input.Email).Find(user)
 
 	if user.Email == "" {
@@ -44,7 +44,7 @@ func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Req
 	}
 
 	if password.CheckHash(input.Password+user.Sult, user.Password) {
-		userTokenModel := models2.UserToken{
+		userTokenModel := models.UserToken{
 			UserId:    user.Id,
 			Token:     randomstring.New(32),
 			CreatedAt: time.Time{},
@@ -60,18 +60,18 @@ func (controller UserController) ActionLogin(rw http.ResponseWriter, r *http.Req
 
 func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var input models2.User
+	var input models.User
 	decoder.Decode(&input)
 
 	sultString := randomstring.New(8)
 	passwordHash := password.Hash(input.Password + sultString)
 
-	userModel := models2.User{
+	userModel := models.User{
 		Name:      input.Name,
 		Surname:   input.Surname,
 		Email:     input.Email,
 		Password:  passwordHash,
-		Status:    input.Status,
+		Status:    1,
 		Sult:      sultString,
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},
@@ -81,7 +81,7 @@ func (controller UserController) ActionRegister(rw http.ResponseWriter, r *http.
 
 	_, validateError := govalidator.ValidateStruct(&userModel)
 	if validateError != nil {
-		httperror.New(http.StatusBadRequest, validateError.Error(), rw)
+		httperror.New(http.StatusUnprocessableEntity, validateError.Error(), rw)
 		return
 	}
 

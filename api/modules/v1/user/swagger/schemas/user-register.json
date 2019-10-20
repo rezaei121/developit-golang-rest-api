@@ -1,0 +1,8 @@
+{
+  "properties": {
+    "name": {"type":  "string"},
+    "surname": {"type":  "string"},
+    "email": {"type":  "string"},
+    "password": {"type":  "string"}
+  }
+}
