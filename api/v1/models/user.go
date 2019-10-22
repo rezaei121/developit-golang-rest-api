@@ -1,6 +1,11 @@
 package models
 
-import "time"
+import (
+	"github.com/jinzhu/gorm"
+	"net/http"
+	"strings"
+	"time"
+)
 
 type User struct {
 	Id        uint64 `gorm:"primary_key;AUTO_INCREMENT"`
@@ -24,4 +29,15 @@ type UserToken struct {
 	UserId    uint64 `gorm:"unsigned;not null"`
 	Token     string `gorm:"type:text;not null"`
 	CreatedAt time.Time
+}
+
+func GetUserIdByToken(r *http.Request, db *gorm.DB) uint64 {
+	token := r.Header.Get("Authorization")
+	if token != "" {
+		splitToken := strings.Split(token, "Bearer ")
+		token = splitToken[1]
+	}
+	userTokenModel := UserToken{}
+	db.Where("token = ?", token).Find(&userTokenModel)
+	return userTokenModel.UserId
 }

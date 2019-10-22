@@ -11,7 +11,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "http://localhost:8080/api/modules/v1/user/swagger/schemas/user-login.json"
+              "$ref": "http://localhost:8080/swagger-doc/schemas/user-login.json"
             }
           }
         }
@@ -41,7 +41,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "http://localhost:8080/api/modules/v1/user/swagger/schemas/user-register.json"
+              "$ref": "http://localhost:8080/swagger-doc/schemas/user-register.json"
             }
           }
         }

@@ -1,0 +1,106 @@
+{
+  "/v1/dashboard/twit/create": {
+    "post": {
+      "tags": [
+        "twit"
+      ],
+      "summary": "create twit",
+      "description": "",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "http://localhost:8080/swagger-doc/schemas/twit-create.json"
+            }
+          }
+        }
+      },
+      "responses": {
+        "204": {
+          "description": "Successful. not content"
+        },
+        "400 series": {
+          "description": "errors"
+        }
+      },
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ]
+    }
+  },
+  "/v1/dashboard/twit/update/{id}": {
+    "put": {
+      "tags": [
+        "twit"
+      ],
+      "summary": "update twit",
+      "description": "",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "twit id",
+          "required": true,
+          "explode": true
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "http://localhost:8080/swagger-doc/schemas/twit-create.json"
+            }
+          }
+        }
+      },
+      "responses": {
+        "204": {
+          "description": "Successful. not content"
+        },
+        "400 series": {
+          "description": "errors"
+        }
+      },
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ]
+    }
+  },
+  "/v1/dashboard/twit/delete/{id}": {
+    "delete": {
+      "tags": [
+        "twit"
+      ],
+      "summary": "delete twit",
+      "description": "",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "twit id",
+          "required": true,
+          "explode": true
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Successful. not content"
+        },
+        "400 series": {
+          "description": "errors"
+        }
+      },
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ]
+    }
+  }
+}

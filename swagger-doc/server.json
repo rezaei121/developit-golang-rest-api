@@ -13,5 +13,16 @@
       "url": "http://localhost:8080/api"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "",
+        "name": "Authorization",
+        "in": "header",
+        "scheme": "bearer"
+      }
+    }
+  },
   "paths": {}
 }

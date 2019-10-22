@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"developit-golang-rest-api/api/modules/v1/user/models"
+	"developit-golang-rest-api/api/v1/models"
 	"developit-golang-rest-api/components/helpers/httperror"
 	"github.com/jinzhu/gorm"
 	"net/http"
